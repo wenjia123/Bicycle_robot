@@ -1,0 +1,50 @@
+#VRML_SIM R2022a utf8
+WorldInfo {
+  info [
+    "Bicycle Simulation"
+  ]
+  title "Bicycle"
+  CFM 0.0002
+  ERP 0.6
+  basicTimeStep 5
+  lineScale 1
+  contactProperties [
+    ContactProperties {
+      coulombFriction [
+        8
+      ]
+      bounce 0.001
+      softCFM 0.0003
+    }
+    ContactProperties {
+      material1 "motorcycle_wheel"
+      bounce 0
+      bounceVelocity 0
+      softCFM 0.01
+    }
+  ]
+}
+Viewpoint {
+  orientation 0.037734857584043824 0.010921299807915324 0.9992281049558293 4.668514678144676
+  position 1.0589640344185218 6.239303401516753 0.8135331092742834
+  near 1
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+CircleArena {
+  radius 100
+  floorTileSize 2 2
+  wallThickness 0.1
+  wallHeight 1
+  wallAppearance OldPlywood {
+  }
+}
+Bicycle {
+}
+DEF sueprvisor Robot {
+  translation 1.02 0 0.02
+  controller "Bicycle_supervisor"
+  supervisor TRUE
+}

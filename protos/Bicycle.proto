@@ -1,0 +1,346 @@
+#VRML_SIM R2023a utf8
+# template language: javascript
+PROTO Bicycle [
+  field SFFloat    CenterMass   20
+  field SFFloat    CenterHeight 0.5
+  field SFFloat    a            0.51
+  field SFFloat    b            1.02
+  field SFFloat    c            0.08
+  field SFFloat    lambda       1.25
+  field SFFloat    FrontWheelR  0.35
+  field SFFloat    RearWheelR   0.3
+  field SFFloat    Wheelmass    1
+  field MFNode     Addon []
+  field SFString   controller "Bicycle_controller"
+  field SFString   name "Bicycle"
+
+
+
+
+
+]
+{
+ %<
+    import * as wbgeometry from 'wbgeometry.js';
+    import * as wbrandom from 'wbrandom.js';
+    import * as wbvector2 from 'wbvector2.js';
+
+    let FR = fields.FrontWheelR.value;
+    let RR = fields.RearWheelR.value;
+    let H = fields.CenterHeight.value;
+    let A = fields.a.value;
+    let L = fields.lambda.value;
+    let B = fields.b.value;
+    let C = fields.c.value;
+
+
+ >%
+
+  Robot {
+  rotation 0 1 0 0
+  children [
+InertialUnit {
+      name "imu"
+    }
+    GPS {
+    }
+    Gyro {
+    }
+  Transform {
+      translation 0 0 0
+      children IS Addon
+    }
+
+    DEF steer_axis HingeJoint {
+      jointParameters HingeJointParameters {
+        axis %<= -Math.cos(L) >% 0 %<= Math.sin(L) >%
+        anchor %<= B - (FR / Math.tan(L) - C) >% 0 %<= FR >%
+        minStop -0.5
+        maxStop 0.5
+      }
+device [
+        DEF steer_angle PositionSensor {
+          name "steer_angle"
+        }
+        DEF steering_motor RotationalMotor {
+          name "steering_motor"
+          controlPID 100 0 0
+          maxTorque 10000
+        }
+      ]
+      endPoint DEF fork Solid {
+        translation %<= B - (FR / Math.tan(L) - C) >% 0 0
+        rotation %<= -Math.cos(L) >% 0 %<= Math.sin(L) >% 0
+        children [
+       Gyro {
+            name "steergyro"
+          }
+          DEF fork_body Shape {
+          }
+          DEF front_wheel HingeJoint {
+            jointParameters HingeJointParameters {
+              axis 0 1 0
+              anchor %<= FR / Math.tan(L) - C >% 0 %<= FR >%
+            }
+            endPoint SolidTorus {
+              translation %<= FR / Math.tan(L) - C >% 0 %<= FR >%
+              rotation 1 0 0 1.57
+              majorRadius IS FrontWheelR
+              minorRadius 0.01
+              subdivision 240
+              appearance DEF bikecolor PBRAppearance {
+                baseColor 0.105882 0.105882 0.105882
+                roughness 0.5
+                metalness 0
+              }
+              physics Physics {
+                mass IS Wheelmass
+              }
+            }
+          }
+        ]
+        name "solid(1)"
+        boundingObject USE fork_body
+        physics Physics {
+          mass 0.001
+        }
+      }
+    }
+    DEF rear_axis HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 1 0
+        anchor 0 0 %<= RR >%
+      }
+      device [
+        DEF rear_wheel_pos PositionSensor {
+          name "rear_wheel_pos_sensor"
+        }
+        DEF drive_motor RotationalMotor {
+          name "drive_motor"
+          controlPID 100000 0 0
+          maxVelocity 1000
+          maxTorque 100
+        }
+        DEF rear_brake Brake {
+          name "rear_brake"
+        }
+      ]
+      endPoint SolidTorus {
+        translation 0 0 %<= RR >%
+        rotation 1 0 0 1.57
+        majorRadius IS RearWheelR
+        minorRadius 0.01
+        subdivision 240
+        appearance DEF bikecolor PBRAppearance {
+          baseColor 0.106 0.106 0.106
+          roughness 0.5
+          metalness 0
+        }
+        physics Physics {
+          mass IS Wheelmass
+        }
+      }
+    }
+    DEF centermass Solid {
+      translation %<= A >% 0 %<= H >%
+      children [
+
+        Shape {
+          geometry Sphere {
+            radius 0.01
+            subdivision 5
+          }
+        }
+      ]
+      boundingObject USE fork_body
+      physics Physics {
+        mass IS CenterMass
+      }
+    }
+    Group {
+      children [
+        DEF RearframeParallelL Transform {
+          translation %<= (0.5*B) / 2  >% 0.04 %<= RR >%
+          rotation 0 1 0 1.57
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.961 0.961 0.961
+              }
+              geometry Cylinder {
+                height %<= 0.5*B >%
+                radius 0.01
+              }
+            }
+          ]
+        }
+        DEF RearframeParallelR Transform {
+          translation %<= (0.5*B) / 2  >% -0.04 %<= RR >%
+          rotation 0 1 0 1.57
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.961 0.961 0.961
+              }
+              geometry Cylinder {
+                height %<= 0.5*B >%
+                radius 0.01
+              }
+            }
+          ]
+        }
+        DEF ForktR Transform {
+          translation %<= B - (FR / Math.tan(L) - C)-Math.sin(L)*Math.cos(L)*FR >% -0.04 %<= 2*FR-Math.cos(L)*Math.cos(L)*FR >%
+          rotation 0 1 0 %<= L-1.57 >%
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.960784 0.960784 0.960784
+              }
+              geometry Cylinder {
+                height %<= 1.7*FR >%
+                radius 0.01
+              }
+            }
+          ]
+        }
+        DEF ForkL Transform {
+          translation %<= B - (FR / Math.tan(L) - C)-Math.sin(L)*Math.cos(L)*FR >% 0.04 %<= 2*FR-Math.cos(L)*Math.cos(L)*FR >%
+          rotation 0 1 0 %<= L-1.57 >%
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.961 0.961 0.961
+              }
+              geometry Cylinder {
+                height %<= 1.7*FR >%
+                radius 0.01
+              }
+            }
+          ]
+        }
+
+        DEF rearframeL Transform {
+          translation %<= (0.589*B*Math.sin(0.6)) / 2 >% 0.04 %<= (0.589*B*Math.cos(0.6)) / 2+RR >%
+          rotation 0 1 0 0.6
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.961 0.961 0.961
+              }
+              geometry Cylinder {
+                height %<= 0.589*B >%
+                radius 0.01
+              }
+            }
+          ]
+        }
+        DEF rearframeR Transform {
+          translation %<= (0.589*B*Math.sin(0.6)) / 2 >% -0.04 %<= (0.589*B*Math.cos(0.6)) / 2+RR >%
+          rotation 0 1 0 0.6
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.961 0.961 0.961
+              }
+              geometry Cylinder {
+                height %<= 0.589*B >%
+                radius 0.01
+              }
+            }
+          ]
+        }
+
+        DEF forkframeL Transform {
+          translation %<= (0.589*B*Math.sin(0.6)) / 2+ 0.5*B >% 0.02 %<= (0.589*B*Math.cos(0.6)) / 2+RR >%
+          rotation %<= Math.sin(Math.atan(0.04 / (0.5*B))) >% 1 0 0.6
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.961 0.961 0.961
+              }
+              geometry Cylinder {
+                height %<= 0.589*B >%
+                radius 0.01
+              }
+            }
+          ]
+        }
+        DEF forkframeR Transform {
+          translation %<= (0.589*B*Math.sin(0.6)) / 2+ 0.5*B >% -0.02 %<= (0.589*B*Math.cos(0.6)) / 2+RR >%
+          rotation %<= -Math.sin(Math.atan(0.04 / (0.5*B))) >% 1 0 0.6
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.961 0.961 0.961
+              }
+              geometry Cylinder {
+                height %<= 0.589*B >%
+                radius 0.01
+              }
+            }
+          ]
+        }
+        DEF topParallelL Transform {
+          translation %<= (0.5*B) / 2+0.589*B*Math.sin(0.6) >% 0.02 %<= RR+0.589*B*Math.cos(0.6) >%
+          rotation %<= Math.sin(Math.atan(0.04 / (0.5*B))) >% 1 0 1.57
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.961 0.961 0.961
+              }
+              geometry Cylinder {
+                height %<= 0.5*B >%
+                radius 0.01
+              }
+            }
+          ]
+        }
+        DEF topParallelR Transform {
+          translation %<= (0.5*B) / 2+0.589*B*Math.sin(0.6) >% -0.02 %<= RR+0.589*B*Math.cos(0.6) >%
+          rotation %<= -Math.sin(Math.atan(0.04 / (0.5*B))) >% 1 0 1.57
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.961 0.961 0.961
+              }
+              geometry Cylinder {
+                height %<= 0.5*B >%
+                radius 0.01
+              }
+            }
+          ]
+        }
+        DEF middleguy Transform {
+          translation %<= 0.5*B-(0.5*B)*Math.sin(Math.atan( (0.5*B-0.589*B*Math.sin(0.6)) / (0.589*B*Math.cos(0.6)) )) / 2 >% 0 %<= RR+(0.5*B)*Math.cos(Math.atan( (0.5*B-0.589*B*Math.sin(0.6)) / (0.589*B*Math.cos(0.6)) )) / 2>%
+          rotation 0 1 0 %<= -Math.atan( (0.5*B-0.589*B*Math.sin(0.6)) / (0.589*B*Math.cos(0.6)) ) >%
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.961 0.961 0.961
+              }
+              geometry Cylinder {
+                height %<= 0.5*B >%
+                radius 0.02
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  name "bike"
+  boundingObject Transform {
+    rotation 0 0 1 -1.57
+  }
+  physics Physics {
+    mass 1
+    centerOfMass [
+      %<= A >% 0 %<= H >%
+    ]
+  }
+  controller IS controller
+  name IS name
+}
+}
+
