@@ -61,9 +61,19 @@ oldRoll,oldPitch,oldYaw = imu.getRollPitchYaw()
 firstLoop = True
 
 #set the simulation forward speed and calculate rear wheel omega
-driveVelocity = 2
+driveVelocity= 3.75#3.95#28.95
 Rrw = 0.3
 driveOmega = driveVelocity/Rrw
+
+d_roll=0
+k_roll=1000;
+k_rollRate=0;
+error = 0
+dedt = 0
+error_old = 0
+
+
+k=8;
 
 # Main loop:
 # - perform simulation steps until Webots is stopping the controller
@@ -90,33 +100,56 @@ while robot.step(timestep) != -1:
     yaw = yawCorr.update(yaw)
     yawRate = gyros[2]
     (yaw-oldYaw)/(timestep/1000.0)
-    print("yaw/old: "+str(yaw)+","+str(oldYaw))
+    #print("yaw/old: "+str(yaw)+","+str(oldYaw))
+    
     oldYaw = yaw
     roll = rpy[0]
-    rollRate = gyros[0]
-    #(roll-oldRoll)/(timestep/1000.0)
+    rollRate = gyros[0]#(roll-oldRoll)/(timestep/1000.0)
     oldRoll = roll
 
     #now get steer values and calculate steer rate.
     # WEBOTS is in ISO (z up) but Papa is in SAE (z down) so need to flip dir.
     steerangle = -steersensor.getValue()
     steergyros = steergyro.getValues()
-    steerRate = -steergyros[2]
-    (steerangle-oldsteer)/(timestep/1000.0)
+    steerRate = -steergyros[2]#(steerangle-oldsteer)/(timestep/1000.0)
     oldsteer = steerangle
 
 
     # Enter here functions to send actuator commands, like:
+    #motor.setAvailableTorque(10)
     motor.setVelocity(driveOmega)
+    
+    if(simtime>3):
+       goalRoll = 0.1
+    else:
+       goalRoll = 0
+    
+    
+    #goalRoll=0;
+    steer.setControlPID(100,0,0)
+    
+    delta = k*(goalRoll - roll)
+    steer.setPosition(delta)
  
   
+  
+  
     #if(simtime>3):
-       #T = 0.08
+       #T = 0.008
     #else:
        #T = 0
+       
+       
+    #error = d_roll-roll
+    #dedt = (error-error_old)/(timestep/1000.0)
+    #error_old = error
+    #T=k_roll*error+k_rollRate*dedt;
+    #steer.setTorque(T)
+    print(simtime,roll)
     
-    steer.setTorque(0)
-   # steer.setPosition(delta)
+    
+    
+    #steer.setPosition()
     # WEBOTS is in ISO (z up) but Papa is in SAE (z down) so need to flip dir.
     #plot.update(simtime,rollRate)
     #ang = -.2*rpy[0] #+ .50*(rpy[2]-pi)

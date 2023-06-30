@@ -4,9 +4,9 @@ WorldInfo {
     "Bicycle Simulation"
   ]
   title "Bicycle"
-  CFM 0.0002
+  CFM 0.0003
   ERP 0.6
-  basicTimeStep 5
+  basicTimeStep 1
   lineScale 1
   contactProperties [
     ContactProperties {
@@ -16,35 +16,34 @@ WorldInfo {
       bounce 0.001
       softCFM 0.0003
     }
-    ContactProperties {
-      material1 "motorcycle_wheel"
-      bounce 0
-      bounceVelocity 0
-      softCFM 0.01
-    }
   ]
 }
 Viewpoint {
-  orientation 0.037734857584043824 0.010921299807915324 0.9992281049558293 4.668514678144676
-  position 1.0589640344185218 6.239303401516753 0.8135331092742834
+  orientation -0.08568788961013021 -0.5660615451803872 0.8198975013025437 5.717859981169137
+  position -4.720782233372706 2.7341451940735952 2.490423422604782
   near 1
+  follow "Bicycle"
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
 CircleArena {
-  radius 100
+  radius 200
   floorTileSize 2 2
   wallThickness 0.1
   wallHeight 1
   wallAppearance OldPlywood {
   }
 }
-Bicycle {
-}
 DEF sueprvisor Robot {
-  translation 1.02 0 0.02
+  translation 0 0 0.02
   controller "Bicycle_supervisor"
   supervisor TRUE
+}
+DEF MOTORCYCLE Bicycle {
+  CenterHeight 1.02
+  b 1
+  FrontforkM 0.1
+  tireRadius 0.01
 }
