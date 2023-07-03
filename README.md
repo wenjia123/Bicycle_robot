@@ -1,0 +1,1 @@
+Based on our previous experiments in Webots, it's extremely complicated to adjust the premeters like trail c and fork angle $&lambda;$, so we build a PROTO for the basic bicycle that we can change the premeters really easy. All the defalut values are based on the Papadopoulos model.
