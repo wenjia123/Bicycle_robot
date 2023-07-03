@@ -73,17 +73,13 @@ for k in range(1,len(tmodel)):
 		rolld=q[k-1]+b1*T;
 		q[k]=q[k-1]+(tmodel[k]-tmodel[k-1])*qd;
 		rollmodel[k]=rollmodel[k-1]+(tmodel[k]-tmodel[k-1])*rolld;
-print(a1);
-print(a0);
-print(b1);
-print(b0);
-print(qd);
+
 
 figure()
 x_interp=np.interp(roll_ss,rollmodel,tmodel);
 #t_ss=np.where(rollmodel[roll_ss])
 plot(tdata_range,rolldata_range-rolldata_range[0],'b',tmodel,rollmodel,'r',x_interp,roll_ss,'ks')
-title('')
+title('roll angle when using T control')
 xlabel('Time (s)')
 ylabel('$\phi$ (radians)')
 legend(['experiment','model'])

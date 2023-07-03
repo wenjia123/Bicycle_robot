@@ -66,13 +66,13 @@ Rrw = 0.3
 driveOmega = driveVelocity/Rrw
 
 d_roll=0
-k_roll=1000;
+k_roll=13;
 k_rollRate=0;
 error = 0
 dedt = 0
 error_old = 0
 
-
+#k for roll control 
 k=8;
 
 # Main loop:
@@ -119,6 +119,7 @@ while robot.step(timestep) != -1:
     #motor.setAvailableTorque(10)
     motor.setVelocity(driveOmega)
     
+   #roll control  
     if(simtime>3):
        goalRoll = 0.1
     else:
@@ -133,18 +134,19 @@ while robot.step(timestep) != -1:
  
   
   
-  
-    #if(simtime>3):
+ #coding for T control  
+   # if(simtime>3):
        #T = 0.008
     #else:
-       #T = 0
-       
-       
-    #error = d_roll-roll
+       #T = 0  
+   # error = d_roll-roll
     #dedt = (error-error_old)/(timestep/1000.0)
     #error_old = error
     #T=k_roll*error+k_rollRate*dedt;
     #steer.setTorque(T)
+    
+    
+    
     print(simtime,roll)
     
     

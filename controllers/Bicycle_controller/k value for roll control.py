@@ -25,11 +25,11 @@ lam2=( -b1*k-((b1*k)**2-4*a2*(b0*k-a2))**0.5 )/(2*a2);
 
 
 figure()
-
-#plot(real(lam1), imag(lam1), 'b', real(lam2),imag(lam2),'r')
+#x_interp=np.interp(-7,real(lam1),real(lam2),k);
+#plot(real(lam1), imag(lam1), 'b', real(lam2),imag(lam2),'r',-7,7,'ks')
 title('root locus')
-xlabel('Real')
-ylabel('Image')
+xlabel('k')
+ylabel('Real')
 legend(['lam1','lam2'])
 
 plot(k,real(lam1),k,real(lam2))
