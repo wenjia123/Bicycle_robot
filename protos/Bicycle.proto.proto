@@ -12,7 +12,7 @@ PROTO  Bicycle [
   field SFFloat    Wheelmass    1
   field SFFloat    FrontforkM   1
   field SFFloat    tireRadius   .02
-
+  
   field MFNode     Addon []
   field SFString   controller "Bicycle_controller"
   field SFString   name "Bicycle"
@@ -31,7 +31,7 @@ PROTO  Bicycle [
     let L = fields.lambda.value;
     let B = fields.b.value;
     let C = fields.c.value;
-
+    let T = fields.tireRadius.value;
 
  >%
 
@@ -68,7 +68,7 @@ InertialUnit {
         }
       ]
       endPoint DEF fork Solid {
-        translation %<= B - (FR / Math.tan(L) - C) >% 0 0
+        translation %<= B - (FR / Math.tan(L) - C) >% 0 %<=T>%
         rotation %<= -Math.cos(L) >% 0 %<= Math.sin(L) >% 0
         children [
        Gyro {
@@ -167,7 +167,7 @@ appearance PBRAppearance {
         }
       ]
       endPoint SolidTorus {
-        translation 0 0 %<= RR >%
+        translation 0 0 %<= RR+T >%
         rotation 1 0 0 1.57
         majorRadius IS RearWheelR
         minorRadius IS tireRadius
