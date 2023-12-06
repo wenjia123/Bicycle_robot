@@ -12,6 +12,8 @@ PROTO  Bicycle [
   field SFFloat    Wheelmass    1
   field SFFloat    FrontforkM   1
   field SFFloat    tireRadius   .02
+  field SFFloat    Xff          0.9
+  field SFFloat    Zff          0.7
   
   field MFNode     Addon []
   field SFString   controller "Bicycle_controller"
@@ -32,6 +34,8 @@ PROTO  Bicycle [
     let B = fields.b.value;
     let C = fields.c.value;
     let T = fields.tireRadius.value;
+    let XF = fields.Xff.value;
+    let ZF = fields.Zff.value;
 
  >%
 
@@ -68,9 +72,14 @@ InertialUnit {
         }
       ]
       endPoint DEF fork Solid {
-        translation %<= B - (FR / Math.tan(L) - C) >% 0 %<=T>%
+        translation %<= XF >% 0 %<=ZF>%
         rotation %<= -Math.cos(L) >% 0 %<= Math.sin(L) >% 0
-        children [
+                 children [
+          DEF fork_centermass Shape {
+            geometry Sphere {
+              radius 0.02
+            }
+          }
        Gyro {
             name "steergyro"
           }
@@ -79,7 +88,7 @@ InertialUnit {
 
     children[
 DEF ForktR Transform {
-        translation %<= -Math.sin(L)*Math.cos(L)*FR >% -0.04 %<= 2*FR-Math.cos(L)*Math.cos(L)*FR >%
+        translation %<= 0 >% -0.04 %<=0 >%
         rotation 0 1 0 %<= L-1.57 >%
         children [
              Shape {
@@ -94,7 +103,7 @@ appearance PBRAppearance {
           ]
         }
         DEF ForkL Transform {
-          translation %<= -Math.sin(L)*Math.cos(L)*FR >% 0.04 %<= 2*FR-Math.cos(L)*Math.cos(L)*FR >%
+          translation %<= 0 >% 0.04 %<= 0 >%
           rotation 0 1 0 %<= L-1.57 >%
           children [
              Shape {
@@ -115,7 +124,7 @@ appearance PBRAppearance {
           DEF front_wheel HingeJoint {
             jointParameters HingeJointParameters {
               axis 0 1 0
-              anchor %<= FR / Math.tan(L) - C >% 0 %<= FR >%
+              anchor %<= B-XF >% 0 %<= -(ZF-FR)+T >%
             }
             device [
               DEF wheel_front_sensor PositionSensor {
@@ -123,7 +132,7 @@ appearance PBRAppearance {
               }
             ]
             endPoint SolidTorus {
-              translation %<= FR / Math.tan(L) - C >% 0 %<= FR >%
+              translation %<= B-XF >% 0 %<= -(ZF-FR)+T >%
               rotation 1 0 0 1.57
               majorRadius IS FrontWheelR
               minorRadius IS tireRadius
@@ -140,17 +149,20 @@ appearance PBRAppearance {
           }
         ]
         name "solid(1)"
-        boundingObject USE fork_body
+        boundingObject USE fork_centermass
         physics Physics {
           density -1
           mass IS FrontforkM
         }
       }
     }
+
+
+
     DEF rear_axis HingeJoint {
       jointParameters HingeJointParameters {
         axis 0 1 0
-        anchor 0 0 %<= RR >%
+        anchor 0 0 %<= RR+T >%
       }
       device [
         DEF rear_wheel_pos PositionSensor {

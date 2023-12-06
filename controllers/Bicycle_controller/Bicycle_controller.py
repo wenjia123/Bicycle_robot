@@ -61,7 +61,7 @@ oldRoll,oldPitch,oldYaw = imu.getRollPitchYaw()
 firstLoop = True
 
 #set the simulation forward speed and calculate rear wheel omega
-driveVelocity= 3.75#3.95#28.95
+driveVelocity= 4#3.95#28.95
 Rrw = 0.3
 driveOmega = driveVelocity/Rrw
 

@@ -1,6 +1,6 @@
 from numpy import *
 from matplotlib.pyplot import *
-import control as cnt
+#import control as cnt
 
 #load the data file from webots:
 data = loadtxt("webots_data.txt",delimiter=",")
