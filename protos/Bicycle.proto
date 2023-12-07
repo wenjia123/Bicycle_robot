@@ -14,7 +14,7 @@ PROTO  Bicycle [
   field SFFloat    tireRadius   .02
   field SFFloat    Xff          0.9
   field SFFloat    Zff          0.7
-  
+
   field MFNode     Addon []
   field SFString   controller "Bicycle_controller"
   field SFString   name "Bicycle"
@@ -242,7 +242,7 @@ appearance PBRAppearance {
             }
           ]
         }
-        
+
         DEF rearframeL Transform {
           translation %<= (0.589*B*Math.sin(0.6)) / 2 >% 0.04 %<= (0.589*B*Math.cos(0.6)) / 2+RR >%
           rotation 0 1 0 0.6
@@ -364,10 +364,7 @@ appearance PBRAppearance {
     centerOfMass [
       %<= A >% 0 %<= H >%
     ]
-    inertiaMatrix [
-      0 0 0.02
-      0 0.14 0
-    ]
+
   }
   controller IS controller
   name IS name

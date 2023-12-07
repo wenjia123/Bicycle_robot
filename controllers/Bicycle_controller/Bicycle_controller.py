@@ -127,10 +127,10 @@ while robot.step(timestep) != -1:
     
     
     #goalRoll=0;
-    steer.setControlPID(100,0,0)
+    steer.setControlPID(0,0,0)
     
     delta = k*(goalRoll - roll)
-    steer.setPosition(delta)
+    #steer.setPosition(delta)
  
   
   
@@ -143,7 +143,9 @@ while robot.step(timestep) != -1:
     #dedt = (error-error_old)/(timestep/1000.0)
     #error_old = error
     #T=k_roll*error+k_rollRate*dedt;
-    #steer.setTorque(T)
+    steer.setTorque(0)
+    if(simtime>5):
+        steer.setTorque(0.01)
     
     
     

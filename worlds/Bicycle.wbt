@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.022886490856477357 -0.0033254503512121156 0.9997325391904766 4.6798739805606
-  position 0.8179034730023933 2.755007893628036 0.4912111992267048
+  orientation -0.09928618435091985 -0.5226292812164 0.846759049560301 5.654043486651868
+  position -3.0333479568177797 1.86201680394176 1.620868015752772
   near 1
   follow "Bicycle"
 }
@@ -42,8 +42,8 @@ DEF sueprvisor Robot {
   supervisor TRUE
 }
 DEF MOTORCYCLE Bicycle {
-  CenterHeight 1.02
-  b 1
+  CenterMass 85
+  CenterHeight 0.9
   FrontforkM 0.1
   tireRadius 0.01
 }
