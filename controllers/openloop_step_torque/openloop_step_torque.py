@@ -9,8 +9,8 @@ from Rollover import Rollover
 
 driveVelocity= 4#3.95#28.95
 
-stepTime = 5.0 #seconds, time of step response
-stepTorque = 0.01 #Nm, amount of torque to apply to handlebars
+stepTime = 0 #seconds, time of step response
+stepTorque = 0 #Nm, amount of torque to apply to handlebars
 
 # create the Robot instance.
 robot = Robot()

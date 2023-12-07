@@ -4,7 +4,7 @@ WorldInfo {
     "Bicycle Simulation"
   ]
   title "Bicycle"
-  CFM 0.0003
+  CFM 0.0001
   ERP 0.6
   basicTimeStep 1
   lineScale 1
@@ -42,11 +42,11 @@ DEF sueprvisor Robot {
   supervisor TRUE
 }
 DEF MOTORCYCLE Bicycle {
+  Rotation 1 0 0 0.01
   CenterMass 85
   CenterHeight 0.9
   a 0.3
   Wheelmass 3
   FrontforkM 4
-  tireRadius 0.01
   controller "openloop_step_torque"
 }

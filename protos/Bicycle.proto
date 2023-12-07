@@ -1,6 +1,8 @@
 #VRML_SIM R2023a utf8
 # template language: javascript
 PROTO  Bicycle [
+  field SFRotation Rotation 1 0 0 0
+  field SFVec3f    Position 0 0 0
   field SFFloat    CenterMass   20
   field SFFloat    CenterHeight 0.5
   field SFFloat    a            0.51
@@ -40,7 +42,8 @@ PROTO  Bicycle [
  >%
 
  DEF MOTORCYCLE Robot {
-  rotation 0 1 0 0
+  rotation IS Rotation
+  position IS position
   children [
 InertialUnit {
       name "imu"

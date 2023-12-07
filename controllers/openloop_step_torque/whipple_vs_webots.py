@@ -1,5 +1,6 @@
 from numpy import *
 from matplotlib.pyplot import *
+rcParams['text.usetex'] = True
 from scipy import signal
 import control
 import control.matlab as cnt
@@ -49,9 +50,10 @@ ylim([-10,10])
 ######################## STEP RESPONSE ##########################
 
 #load data file from webots:
-t,spd,tq,roll,rollrate,steer,steerrate = loadtxt("step_data_saved.txt",delimiter=",",unpack=True)
+t,spd,tq,roll,rollrate,steer,steerrate = loadtxt("step_data.txt",delimiter=",",unpack=True)
 U = mean(spd)#what was the speed of the test
 T = mean(tq)#what was the step magnitude?
+X0 = array([roll[0],steer[0],rollrate[0],steerrate[0]])
 print("Testing at velocity "+str(U)+" and step torque "+str(T))
 
 
@@ -60,16 +62,17 @@ print("Testing at velocity "+str(U)+" and step torque "+str(T))
 
 #get state space model of bike based on Whipple
 sys = getModelSS(U,params)
-#perform a step response (default magnitude is 1)
-yout,tout = cnt.step(sys)
-#scale step response to match data file's torque magnitude
-yout*=T
+#perform an lsim using measured torque and initial condition values
+yout,tout,xout = cnt.lsim(sys,tq,t,X0)
+
 
 #now plot data vs. whipple
 figure()
 subplot(2,1,1)
 plot(tout,yout[:,0],'k',t,roll,'r')
 legend(['Whipple','Webots'])
+title('$U=$ '+str(round(U,2))+"m/s; $T_\delta=$ "+str(round(T,2))+"Nm; $\phi_0=$"+str(round(roll[0],2))+" rad")
+
 ylabel('Roll (rad)')
 subplot(2,1,2)
 plot(tout,yout[:,1],'k',t,steer,'r')
