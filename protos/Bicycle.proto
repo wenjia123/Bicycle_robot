@@ -1,6 +1,7 @@
 #VRML_SIM R2023a utf8
 # template language: javascript
 PROTO  Bicycle [
+  field SFBool bicycle_shape TRUE
   field SFRotation Rotation 1 0 0 0
   field SFVec3f    Position 0 0 0
   field SFFloat    CenterMass   20
@@ -38,6 +39,7 @@ PROTO  Bicycle [
     let T = fields.tireRadius.value;
     let XF = fields.Xff.value;
     let ZF = fields.Zff.value;
+    let bicycleShape = fields.bicycle_shape.value;
 
  >%
 
@@ -213,6 +215,7 @@ appearance PBRAppearance {
         mass IS CenterMass
       }
     }
+    %<if(bicycleShape){>%
     Group {
       children [
         DEF RearframeParallelL Transform {
@@ -354,6 +357,7 @@ appearance PBRAppearance {
         }
       ]
     }
+    %< }>%
   ]
   name "bike"
   boundingObject Transform {
