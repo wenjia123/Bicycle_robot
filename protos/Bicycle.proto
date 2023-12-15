@@ -2,17 +2,19 @@
 # template language: javascript
 PROTO  Bicycle [
   field SFBool bicycle_shape TRUE
+  field SFBool motorcycle_shape FALSE
   field SFRotation Rotation 1 0 0 0
   field SFVec3f    Position 0 0 0
-  field SFFloat    CenterMass   20
-  field SFFloat    CenterHeight 0.5
+  field SFFloat    CenterMass   85
+  field SFFloat    CenterHeight 0.9
   field SFFloat    a            0.51
   field SFFloat    b            1.02
   field SFFloat    c            0.08
   field SFFloat    lambda       1.25
   field SFFloat    FrontWheelR  0.35
   field SFFloat    RearWheelR   0.3
-  field SFFloat    Wheelmass    1
+  field SFFloat    WheelmassF    3
+  field SFFloat    WheelmassR    3
   field SFFloat    FrontforkM   1
   field SFFloat    tireRadius   .02
   field SFFloat    Xff          0.9
@@ -40,6 +42,94 @@ PROTO  Bicycle [
     let XF = fields.Xff.value;
     let ZF = fields.Zff.value;
     let bicycleShape = fields.bicycle_shape.value;
+    let motorcycleShape = fields.motorcycle_shape.value;
+
+  function motorcycleRearFrame(b,a,Rfw,Rrw,lambda){
+  this.b = b;
+  this.a = a;
+  this.Rrw = Rrw;
+  this.Rfw = Rfw;
+  this.wid = 0.2
+  this.lam=lambda;
+
+  this.vertices = []//this will hold all xyz points of the road
+  this.coordIndices = []//this is a list of triangles defined by the indices in the 'vertices' list.
+
+  this.createVertices = function(){
+    let x0 = 0;
+    let z0 = 3*this.Rrw;//tip of back fender
+    let x1 = this.a;
+    let z1 = 2*this.Rrw;//fender meets frame above footpegs
+    let x2 = this.a;
+    let z2 = 1.414*2*this.Rrw;//middle of seat above footpegs
+    let x3 = this.a;
+    let z3 = this.Rrw;//lowest point on frame; footpegs
+    let x4 = this.b-this.Rfw;
+    let z4 = 3*this.Rfw;//steering pivot allows 1 radius of wheel travel.
+    let x5 = this.b-1.5*this.Rfw;//front bottom of frame
+    let z5 = this.Rrw;
+    let xside = [x0,x1,x2,x3,x4,x5];
+    let zside = [z0,z1,z2,z3,z4,z5];
+    //push vertices for left side of bike
+    for (let i=0;i<6;i++){
+      this.vertices.push([xside[i],this.wid/2,zside[i]])
+    }
+    //do same for right side of bike.
+    for (let i=0;i<6;i++){
+      this.vertices.push([xside[i],-this.wid/2,zside[i]])
+    }
+  }
+  this.createTriangles = function(){
+      this.createVertices();
+      //rear fender triangle
+      this.coordIndices.push([0,1,2]);
+      //seat to steer to footpegs triangle
+      this.coordIndices.push([2,3,4]);
+      //engine cradle triangle
+      this.coordIndices.push([3,5,4]);
+      //repeat for other side:
+      //rear fender triangle
+      this.coordIndices.push([6,7,8]);
+      //seat to steer to footpegs triangle
+      this.coordIndices.push([8,9,10]);
+      //engine cradle triangle
+      this.coordIndices.push([9,11,10]);
+      this.coordIndices.push([2,1,0]);
+      //seat to steer to footpegs triangle
+      this.coordIndices.push([4,3,2]);
+      //engine cradle triangle
+      this.coordIndices.push([4,5,3]);
+      //repeat for other side:
+      //rear fender triangle
+      this.coordIndices.push([8,7,6]);
+      //seat to steer to footpegs triangle
+      this.coordIndices.push([10,9,8]);
+      //engine cradle triangle
+      this.coordIndices.push([10,11,9]);
+      //now create triangles for seat
+      this.coordIndices.push([0,6,2]);
+      this.coordIndices.push([6,8,2]);
+      this.coordIndices.push([2,6,0]);
+      this.coordIndices.push([2,8,6]);
+      //create triangles for gas tank
+      this.coordIndices.push([2,8,4]);
+      this.coordIndices.push([8,10,4]);
+      //create triangles for front face of frame
+      this.coordIndices.push([4,10,5]);
+      this.coordIndices.push([5,10,11]);
+      //create triangles for bottom face of frame
+      this.coordIndices.push([5,11,3]);
+      this.coordIndices.push([3,11,9]);
+      //create triangles for mud guard
+      this.coordIndices.push([8,2,3]);
+      this.coordIndices.push([3,9,8])
+
+  }
+
+}
+
+  var myFrame = new motorcycleRearFrame(B,A,FR,RR,L)
+  myFrame.createTriangles();
 
  >%
 
@@ -148,7 +238,7 @@ appearance PBRAppearance {
                 metalness 0
               }
               physics Physics {
-                mass IS Wheelmass
+                mass IS WheelmassF
               }
             }
           }
@@ -195,7 +285,7 @@ appearance PBRAppearance {
           metalness 0
         }
         physics Physics {
-          mass IS Wheelmass
+          mass IS WheelmassR
         }
       }
     }
@@ -358,6 +448,28 @@ appearance PBRAppearance {
       ]
     }
     %< }>%
+    %<if(motorcycleShape){>%
+      Shape{
+      appearance Appearance{
+        material Material{
+          diffuseColor 0.2 0.2 0.2
+        }
+      }
+      geometry IndexedFaceSet{
+      coord Coordinate{
+        point[
+          %< for (let i = 0; i < myFrame.vertices.length; ++i) { >%
+          %<= myFrame.vertices[i][0] >% %<= myFrame.vertices[i][1] >% %<= myFrame.vertices[i][2] >%
+          %< } >%
+        ]
+      }
+      coordIndex[ %<for (let i = 0; i < myFrame.coordIndices.length; ++i) { >%
+      %<= myFrame.coordIndices[i][0] >% %<= myFrame.coordIndices[i][1] >% %<= myFrame.coordIndices[i][2] >% -1
+        %<}>%
+      ]
+      }
+      }
+    %<}>%
   ]
   name "bike"
   boundingObject Transform {

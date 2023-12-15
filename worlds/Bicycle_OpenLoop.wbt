@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.017167426843075748 -0.7906861912557973 0.6119809036342463 5.9146397267840936
-  position -4.57823592633857 2.0811063199209263 1.4455927283731025
+  orientation -0.16987808327873605 -0.3059988503251232 0.9367529772684183 5.074176620161559
+  position -0.5573187663643716 5.126663751117689 2.147089361839614
   near 1
   follow "Bicycle"
 }
@@ -42,11 +42,10 @@ DEF sueprvisor Robot {
   supervisor TRUE
 }
 DEF MOTORCYCLE Bicycle {
+  bicycle_shape TRUE
+  motorcycle_shape FALSE
   Rotation 1 0 0 0.01
-  CenterMass 85
-  CenterHeight 0.9
   a 0.3
-  Wheelmass 3
   FrontforkM 4
   controller "openloop_step_torque"
 }
