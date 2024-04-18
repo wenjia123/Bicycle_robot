@@ -1,9 +1,9 @@
 Webots Proto Cache File version 1.5
-protoFileHash: 45d66af72d440f344f0c8370eb8423a4
+protoFileHash: 9e820e77e967d9f2e4015db8ea7e07c6
 needsRobotAncestor: 1
 baseType: Robot
 slotType: 
-parameters: bicycle_shape,motorcycle_shape,Rotation,Position,CenterMass,CenterHeight,a,b,c,lambda,FrontWheelR,RearWheelR,Wheelmass,FrontforkM,tireRadius,Xff,Zff,Addon,controller,name
+parameters: bicycle_shape,motorcycle_shape,Rotation,Position,CenterMass,CenterHeight,a,b,c,lambda,FrontWheelR,RearWheelR,WheelmassF,WheelmassR,FrontforkM,tireRadius,Xff,Zff,Addon,controller,name
 tags: 
 license: 
 licenseUrl: 

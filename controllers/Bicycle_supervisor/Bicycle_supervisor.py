@@ -11,5 +11,5 @@ mc_node = robot.getFromDef('MOTORCYCLE')
 i = 0
 while robot.step(TIME_STEP) != -1:
   if (i <5 ):
-    mc_node.setVelocity([4,0,0,0,0,0])
+    mc_node.setVelocity([5.25,0,0,0,0,0])
   i += 1

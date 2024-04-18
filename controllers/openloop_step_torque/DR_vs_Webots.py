@@ -9,7 +9,8 @@ from whipple_model import getModelSS
 #construct Whipple model of the bike.
 param_names = ['a ','b ','c','hrf','mrf','xff','zff','mff','Rfw','mfw','Rrw','mrw','Jyyf','Jyyr','lam']
 # params = array([.3,1.02,.08,.9,85,.9,.7,4,.35,3,.3,3,.28*.65,.12*.65,1.25])
-params = array([.3,1.02,.08,.9,85,.9,.7,4,.35,3,.3,3,3*.35**2,3*.3**2,1.25])
+params = array([.6888,1.45,0.115,0.5186,158.1,1.25,0.7347,10,0.356,10,0.33,13,0.62424,0.6795,1.1])
+#params = array([.708,1.45,0.115,0.509,158.1,1.25,0.7347,10,0.356,10,0.33,13,.3,.3,1.1])
 
 def getEigsVecs(params):
     #create a vector of velocities to investigate
@@ -50,7 +51,7 @@ ylim([-10,10])
 ######################## STEP RESPONSE ##########################
 
 #load data file from webots:
-t,spd,tq,roll,rollrate,steer,steerrate = loadtxt("/Users/wenjia/Desktop/Bicycle_robot/controllers/openloop_step_torque/step_data.txt",delimiter=",",unpack=True)
+t,spd,tq,roll,rollrate,steer,steerrate = loadtxt("/Users/wenjia/Desktop/Bicycle_robot/controllers/openloop_step_torque/DR_step_data.txt",delimiter=",",unpack=True)
 U = mean(spd)#what was the speed of the test
 T = mean(tq)#what was the step magnitude?
 X0 = array([roll[0],steer[0],rollrate[0],steerrate[0]])
@@ -70,7 +71,7 @@ yout,tout,xout = cnt.lsim(sys,tq,t,X0)
 figure()
 subplot(2,1,1)
 plot(tout,yout[:,0],'k',t,roll,'r')
-legend(['Whipple','Webots'])
+legend(['DR_model','Webots'])
 title('$U=$ '+str(round(U,2))+"m/s; $T_\delta=$ "+str(round(T,2))+"Nm; $\phi_0=$"+str(round(roll[0],2))+" rad")
 
 ylabel('Roll (rad)')

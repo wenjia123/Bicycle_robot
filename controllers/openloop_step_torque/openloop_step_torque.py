@@ -7,7 +7,7 @@ from numpy import *
 from Rollover import Rollover
 #from realtime_plotter import RealTimePlot
 
-driveVelocity= 4#3.95#28.95
+driveVelocity= 5.25#7.33#3.95#28.95
 
 stepTime = 0 #seconds, time of step response
 stepTorque = 0 #Nm, amount of torque to apply to handlebars
@@ -20,7 +20,7 @@ recordData = True
 
 if recordData:
     # start a file we can use to collect data
-    f = open('step_data.txt','w')
+    f = open('DR_step_data.txt','w')
     f.write("# time, speed, Torque, roll, rollrate, steer, steerrate\r\n")
 
 # get the time step of the current world.
@@ -67,7 +67,7 @@ firstLoop = True
 
 #set the simulation forward speed and calculate rear wheel omega
 
-Rrw = 0.3
+Rrw = 0.33
 driveOmega = driveVelocity/Rrw
 
 
