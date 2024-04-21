@@ -56,7 +56,7 @@ DEF MOTORCYCLE Bicycle {
   WheelmassF 10
   WheelmassR 13
   FrontforkM 10
-  tireRadius 0.05
+  tireRadiusF 0.01
   Xff 1.25
   Zff 0.735
   controller "openloop_step_torque"

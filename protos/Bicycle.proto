@@ -16,7 +16,8 @@ PROTO  Bicycle [
   field SFFloat    WheelmassF    3
   field SFFloat    WheelmassR    3
   field SFFloat    FrontforkM   1
-  field SFFloat    tireRadius   .02
+  field SFFloat    tireRadiusF   .02
+  field SFFloat    tireRadiusR   .02
   field SFFloat    Xff          0.9
   field SFFloat    Zff          0.7
 
@@ -38,7 +39,8 @@ PROTO  Bicycle [
     let L = fields.lambda.value;
     let B = fields.b.value;
     let C = fields.c.value;
-    let T = fields.tireRadius.value;
+    let Tf = fields.tireRadiusF.value;
+    let Tr = fields.tireRadiusR.value;
     let XF = fields.Xff.value;
     let ZF = fields.Zff.value;
     let bicycleShape = fields.bicycle_shape.value;
@@ -219,7 +221,7 @@ appearance PBRAppearance {
           DEF front_wheel HingeJoint {
             jointParameters HingeJointParameters {
               axis 0 1 0
-              anchor %<= B-XF >% 0 %<= -(ZF-FR)+T >%
+              anchor %<= B-XF >% 0 %<= -(ZF-FR)+Tf >%
             }
             device [
               DEF wheel_front_sensor PositionSensor {
@@ -227,10 +229,10 @@ appearance PBRAppearance {
               }
             ]
             endPoint SolidTorus {
-              translation %<= B-XF >% 0 %<= -(ZF-FR)+T >%
+              translation %<= B-XF >% 0 %<= -(ZF-FR)+Tf >%
               rotation 1 0 0 1.57
               majorRadius IS FrontWheelR
-              minorRadius IS tireRadius
+              minorRadius IS tireRadiusF
               subdivision 240
               appearance DEF bikecolor PBRAppearance {
                 baseColor 0.105882 0.105882 0.105882
@@ -257,7 +259,7 @@ appearance PBRAppearance {
     DEF rear_axis HingeJoint {
       jointParameters HingeJointParameters {
         axis 0 1 0
-        anchor 0 0 %<= RR+T >%
+        anchor 0 0 %<= RR+Tr >%
       }
       device [
         DEF rear_wheel_pos PositionSensor {
@@ -274,10 +276,10 @@ appearance PBRAppearance {
         }
       ]
       endPoint SolidTorus {
-        translation 0 0 %<= RR+T >%
+        translation 0 0 %<= RR+Tr >%
         rotation 1 0 0 1.57
         majorRadius IS RearWheelR
-        minorRadius IS tireRadius
+        minorRadius IS tireRadiusR
         subdivision 240
         appearance DEF bikecolor PBRAppearance {
           baseColor 0.106 0.106 0.106
